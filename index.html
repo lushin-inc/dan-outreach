@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dan Faber - Outreach Progress</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script>
+/* =====================================================================
+   DAILY UPDATE: change the "done" numbers below (and optionally add
+   names). Nothing else in the file needs to change.
+   ===================================================================== */
+const GOALS = [
+  {
+    title: "Groups",
+    grad: ["#21245C", "#00ADED"],
+    rows: [
+      { label: "Find 10 groups + contacts", target: 10, done: 0, names: [] },
+      { label: "Contact those 10 people",   target: 10, done: 0, names: [] }
+    ]
+  },
+  {
+    title: "Phi Taus",
+    grad: ["#0045C2", "#00ADED"],
+    rows: [
+      { label: "Pick 3 Phi Taus",    target: 3, done: 0, names: [] },
+      { label: "Contact 3 Phi Taus", target: 3, done: 0, names: [] }
+    ]
+  },
+  {
+    title: "Past contacts",
+    grad: ["#E34554", "#F05A28"],
+    rows: [
+      { label: "Pick 5 past contacts", target: 5, done: 0, names: [] },
+      { label: "Contact them",         target: 5, done: 0, names: [] }
+    ]
+  },
+  {
+    title: "WATN",
+    grad: ["#F05A28", "#FAB040"],
+    rows: [
+      { label: "Pick 3 x WATN", target: 3, done: 0, names: [] },
+      { label: "Contact them",  target: 3, done: 0, names: [] }
+    ]
+  }
+];
+</script>
+<style>
+  :root {
+    --stable: #21245C;
+    --fresh: #00ADED;
+    --gray: #EDEDED;
+    --text: #333333;
+    --soft: #6b6d8a;
+    --font: 'Poppins', Arial, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: var(--font);
+    background: #ffffff;
+    color: var(--text);
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 56px 24px 80px;
+  }
+  header { margin-bottom: 40px; }
+  .who {
+    font-size: 15px;
+    font-weight: 300;
+    color: var(--stable);
+    opacity: .85;
+  }
+  h1 {
+    font-size: 30px;
+    font-weight: 500;
+    color: var(--stable);
+    margin-top: 2px;
+  }
+
+  .overall {
+    margin-top: 22px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .overall-track {
+    flex: 1;
+    height: 10px;
+    border-radius: 999px;
+    background: var(--gray);
+    overflow: hidden;
+  }
+  .overall-fill {
+    height: 100%;
+    border-radius: 999px;
+    background: linear-gradient(90deg, var(--stable), var(--fresh));
+    transition: width .6s ease;
+  }
+  .overall-num {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--stable);
+    white-space: nowrap;
+  }
+
+  section {
+    padding: 30px 28px 32px;
+    border-radius: 20px;
+    background: #f6f6f9;
+    margin-bottom: 20px;
+  }
+  .sec-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 22px;
+  }
+  .sec-num {
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    color: #fff;
+    font-size: 15px;
+    font-weight: 600;
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+  }
+  h2 {
+    font-size: 21px;
+    font-weight: 500;
+    color: var(--stable);
+  }
+
+  .row + .row { margin-top: 24px; }
+  .row-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+  .label {
+    font-size: 16px;
+    font-weight: 400;
+    color: var(--text);
+  }
+  .count {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--stable);
+    white-space: nowrap;
+  }
+  .count .of { font-weight: 300; color: var(--soft); }
+  .count.done {
+    color: #fff;
+    padding: 3px 14px;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .count.done .of { color: #fff; opacity: .85; }
+  .count svg { width: 14px; height: 14px; }
+
+  .bar {
+    display: grid;
+    height: 46px;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .cell {
+    border-left: 5px solid #f6f6f9;
+    background: transparent;
+  }
+  .cell:first-child { border-left: 0; }
+  .cell.empty { background: #e2e3ea; }
+  .bar.complete { box-shadow: 0 6px 22px -6px var(--glow); }
+
+  .names {
+    list-style: none;
+    margin-top: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .names li {
+    font-size: 13px;
+    color: var(--stable);
+    background: #fff;
+    padding: 4px 12px;
+    border-radius: 999px;
+  }
+
+  @media (max-width: 520px) {
+    .wrap { padding: 36px 16px 60px; }
+    section { padding: 24px 18px 26px; }
+    .bar { height: 38px; }
+    .label, .count { font-size: 15px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .overall-fill { transition: none; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="who">Dan Faber</div>
+    <h1>Outreach Progress</h1>
+    <div class="overall">
+      <div class="overall-track"><div class="overall-fill" id="overallFill" style="width:0"></div></div>
+      <div class="overall-num" id="overallNum"></div>
+    </div>
+  </header>
+  <main id="goals"></main>
+</div>
+
+<script>
+  const check = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5l3.2 3L13 4.5"/></svg>';
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+  let total = 0, doneAll = 0;
+  const html = GOALS.map((g, gi) => {
+    const grad = `linear-gradient(90deg, ${g.grad[0]}, ${g.grad[1]})`;
+    const rows = g.rows.map(r => {
+      const done = Math.max(0, Math.min(r.target, r.done));
+      total += r.target; doneAll += done;
+      const complete = done >= r.target;
+      const cells = Array.from({length: r.target}, (_, i) =>
+        `<div class="cell ${i < done ? '' : 'empty'}"></div>`).join('');
+      const count = complete
+        ? `<span class="count done" style="background:${grad}">${check}${done}<span class="of">&nbsp;/ ${r.target}</span></span>`
+        : `<span class="count">${done}<span class="of"> / ${r.target}</span></span>`;
+      const names = (r.names && r.names.length)
+        ? `<ul class="names">${r.names.map(n => `<li>${esc(n)}</li>`).join('')}</ul>` : '';
+      return `
+        <div class="row">
+          <div class="row-top"><span class="label">${esc(r.label)}</span>${count}</div>
+          <div class="bar ${complete ? 'complete' : ''}"
+               style="grid-template-columns:repeat(${r.target},1fr);background:${grad};--glow:${g.grad[1]}66">${cells}</div>
+          ${names}
+        </div>`;
+    }).join('');
+    return `
+      <section>
+        <div class="sec-head">
+          <div class="sec-num" style="background:${grad}">${gi + 1}</div>
+          <h2>${esc(g.title)}</h2>
+        </div>
+        ${rows}
+      </section>`;
+  }).join('');
+
+  document.getElementById('goals').innerHTML = html;
+  document.getElementById('overallNum').textContent = `${doneAll} of ${total}`;
+  requestAnimationFrame(() => {
+    document.getElementById('overallFill').style.width = (total ? doneAll / total * 100 : 0) + '%';
+  });
+</script>
+</body>
+</html>
