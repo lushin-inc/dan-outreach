@@ -1,84 +1,182 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Dan Faber - Outreach Progress</title>
+<script>
+  // Set theme before first paint (defaults to dark)
+  (function () {
+    var t = 'dark';
+    try { t = localStorage.getItem('outreach-theme') || 'dark'; } catch (e) {}
+    document.documentElement.setAttribute('data-theme', t);
+  })();
+</script>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
 <script>
 /* =====================================================================
-   DAILY UPDATE: change the "done" numbers below (and optionally add
-   names). Nothing else in the file needs to change.
+   DAILY UPDATE: change the "done" numbers below, flip the EOD day to
+   true once the email is sent, and optionally add names.
+   type "prep" rows show on the Prep tab, "contact" rows on the Contact tab.
+   Days left updates on its own from today's date.
    ===================================================================== */
+const DAYS = [
+  { day: "Wed", date: "2026-09-23" },
+  { day: "Thu", date: "2026-09-24" },
+  { day: "Fri", date: "2026-09-25" },
+  { day: "Mon", date: "2026-09-28" },
+  { day: "Tue", date: "2026-09-29" }
+];
+
+const EOD_SENT = { Wed: true, Thu: false, Fri: false, Mon: false, Tue: false };
+
 const GOALS = [
   {
     title: "Talks",
-    grad: ["#21245C", "#00ADED"],
+    grad: ["#3A40A8", "#00ADED"],
     rows: [
-      { label: "Find 10 groups + contacts", target: 10, done: 10, names: [] },
-      { label: "Contact those 10 people",   target: 10, done: 0, names: [] }
+      { type: "prep",    label: "Find 10 groups + contacts", target: 10, done: 10, names: [] },
+      { type: "contact", label: "Contact those 10 people",   target: 10, done: 0,  names: [] }
     ]
   },
   {
     title: "Phi Taus",
     grad: ["#0045C2", "#00ADED"],
     rows: [
-      { label: "Pick 3 Phi Taus",    target: 3, done: 3, names: [] },
-      { label: "Contact 3 Phi Taus", target: 3, done: 1, names: [] }
+      { type: "prep",    label: "Pick 3 Phi Taus",    target: 3, done: 3, names: [] },
+      { type: "contact", label: "Contact 3 Phi Taus", target: 3, done: 1, names: [] }
     ]
   },
   {
     title: "Past contacts",
     grad: ["#E34554", "#F05A28"],
     rows: [
-      { label: "Pick 5 past contacts", target: 5, done: 0, names: [] },
-      { label: "Contact them",         target: 5, done: 0, names: [] }
+      { type: "prep",    label: "Pick 5 past contacts", target: 5, done: 0, names: [] },
+      { type: "contact", label: "Contact them",         target: 5, done: 0, names: [] }
     ]
   },
   {
     title: "Where are they now",
     grad: ["#F05A28", "#FAB040"],
     rows: [
-      { label: "Pick 3 where are they now's", target: 3, done: 0, names: [] },
-      { label: "Contact them",  target: 3, done: 0, names: [] }
+      { type: "prep",    label: "Pick 3 where are they now's", target: 3, done: 0, names: [] },
+      { type: "contact", label: "Contact them",                target: 3, done: 0, names: [] }
     ]
   }
 ];
+
+const DAYS_GRAD = ["#00ADED", "#0045C2"];
+const EOD_GRAD  = ["#FAB040", "#E34554"];
 </script>
 <style>
   :root {
     --stable: #21245C;
     --fresh: #00ADED;
-    --gray: #EDEDED;
+    --font: 'Poppins', Arial, sans-serif;
+
+    --bg: #ffffff;
+    --card: #f6f6f9;
+    --empty: #e2e3ea;
+    --track: #EDEDED;
+    --heading: #21245C;
     --text: #333333;
     --soft: #6b6d8a;
-    --font: 'Poppins', Arial, sans-serif;
+    --tabs-bg: #f0f0f4;
+    --tab-active-bg: #21245C;
+    --tab-active-text: #ffffff;
+    --chip: #ffffff;
+    --empty-label: #8a8ca8;
   }
+  :root[data-theme="dark"] {
+    --bg: #0e0f26;
+    --card: #181a3d;
+    --empty: #282b58;
+    --track: #282b58;
+    --heading: #ffffff;
+    --text: #d6d8ee;
+    --soft: #8d90b8;
+    --tabs-bg: #181a3d;
+    --tab-active-bg: #ffffff;
+    --tab-active-text: #21245C;
+    --chip: #282b58;
+    --empty-label: #7b7fa8;
+  }
+
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
     font-family: var(--font);
-    background: #ffffff;
+    background: var(--bg);
     color: var(--text);
     -webkit-font-smoothing: antialiased;
+    transition: background .25s ease, color .25s ease;
   }
   .wrap {
     max-width: 760px;
     margin: 0 auto;
     padding: 56px 24px 80px;
   }
-  header { margin-bottom: 40px; }
+  header { margin-bottom: 28px; }
+  .head-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+  }
   .who {
     font-size: 15px;
     font-weight: 300;
-    color: var(--stable);
-    opacity: .85;
+    color: var(--heading);
+    opacity: .8;
   }
   h1 {
     font-size: 30px;
     font-weight: 500;
-    color: var(--stable);
+    color: var(--heading);
     margin-top: 2px;
   }
+
+  .theme-btn {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    border: 0;
+    background: var(--card);
+    color: var(--heading);
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  .theme-btn svg { width: 20px; height: 20px; }
+  .theme-btn .ico-sun { display: none; }
+  :root[data-theme="dark"] .theme-btn .ico-sun { display: block; }
+  :root[data-theme="dark"] .theme-btn .ico-moon { display: none; }
+  .theme-btn:focus-visible { outline: 3px solid var(--fresh); outline-offset: 2px; }
+
+  .tabs {
+    display: flex;
+    gap: 4px;
+    margin-top: 22px;
+    padding: 4px;
+    background: var(--tabs-bg);
+    border-radius: 999px;
+    width: fit-content;
+    max-width: 100%;
+  }
+  .tab {
+    font-family: var(--font);
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--soft);
+    background: transparent;
+    border: 0;
+    border-radius: 999px;
+    padding: 9px 22px;
+    cursor: pointer;
+    transition: background .2s ease, color .2s ease;
+  }
+  .tab:hover { color: var(--heading); }
+  .tab.active { background: var(--tab-active-bg); color: var(--tab-active-text); }
+  .tab:focus-visible { outline: 3px solid var(--fresh); outline-offset: 2px; }
 
   .overall {
     margin-top: 22px;
@@ -90,7 +188,7 @@ const GOALS = [
     flex: 1;
     height: 10px;
     border-radius: 999px;
-    background: var(--gray);
+    background: var(--track);
     overflow: hidden;
   }
   .overall-fill {
@@ -99,17 +197,18 @@ const GOALS = [
     background: linear-gradient(90deg, var(--stable), var(--fresh));
     transition: width .6s ease;
   }
+  :root[data-theme="dark"] .overall-fill { background: linear-gradient(90deg, #0045C2, var(--fresh)); }
   .overall-num {
     font-size: 15px;
     font-weight: 500;
-    color: var(--stable);
+    color: var(--heading);
     white-space: nowrap;
   }
 
   section {
     padding: 30px 28px 32px;
     border-radius: 20px;
-    background: #f6f6f9;
+    background: var(--card);
     margin-bottom: 20px;
   }
   .sec-head {
@@ -128,11 +227,13 @@ const GOALS = [
     place-items: center;
     flex-shrink: 0;
   }
+  .sec-num svg { width: 17px; height: 17px; }
   h2 {
     font-size: 21px;
     font-weight: 500;
-    color: var(--stable);
+    color: var(--heading);
   }
+  .sec-head .count { margin-left: auto; }
 
   .row + .row { margin-top: 24px; }
   .row-top {
@@ -142,15 +243,11 @@ const GOALS = [
     gap: 12px;
     margin-bottom: 10px;
   }
-  .label {
-    font-size: 16px;
-    font-weight: 400;
-    color: var(--text);
-  }
+  .label { font-size: 16px; font-weight: 400; color: var(--text); }
   .count {
     font-size: 16px;
     font-weight: 600;
-    color: var(--stable);
+    color: var(--heading);
     white-space: nowrap;
   }
   .count .of { font-weight: 300; color: var(--soft); }
@@ -172,12 +269,26 @@ const GOALS = [
     overflow: hidden;
   }
   .cell {
-    border-left: 5px solid #f6f6f9;
+    border-left: 5px solid var(--card);
     background: transparent;
+    display: grid;
+    place-items: center;
+    font-size: 14px;
+    font-weight: 600;
+    color: #fff;
   }
   .cell:first-child { border-left: 0; }
-  .cell.empty { background: #e2e3ea; }
+  .cell.empty { background: var(--empty); color: var(--empty-label); font-weight: 500; }
+  .cell.today {
+    background: var(--empty);
+    color: var(--fresh);
+    box-shadow: inset 0 0 0 2px var(--fresh);
+    border-radius: 0;
+  }
+  .cell svg { width: 16px; height: 16px; }
+  .cell-in { display: inline-flex; align-items: center; gap: 6px; }
   .bar.complete { box-shadow: 0 6px 22px -6px var(--glow); }
+  .bar.labeled { height: 52px; }
 
   .names {
     list-style: none;
@@ -188,8 +299,8 @@ const GOALS = [
   }
   .names li {
     font-size: 13px;
-    color: var(--stable);
-    background: #fff;
+    color: var(--heading);
+    background: var(--chip);
     padding: 4px 12px;
     border-radius: 999px;
   }
@@ -198,18 +309,34 @@ const GOALS = [
     .wrap { padding: 36px 16px 60px; }
     section { padding: 24px 18px 26px; }
     .bar { height: 38px; }
+    .bar.labeled { height: 44px; }
     .label, .count { font-size: 15px; }
+    .tab { padding: 8px 16px; font-size: 14px; }
+    .cell { font-size: 13px; }
   }
   @media (prefers-reduced-motion: reduce) {
-    .overall-fill { transition: none; }
+    .overall-fill, body { transition: none; }
   }
 </style>
 </head>
 <body>
 <div class="wrap">
   <header>
-    <div class="who">Dan Faber</div>
-    <h1>Outreach Progress</h1>
+    <div class="head-top">
+      <div>
+        <div class="who">Dan Faber</div>
+        <h1>Outreach Progress</h1>
+      </div>
+      <button class="theme-btn" id="themeBtn" aria-label="Toggle light and dark">
+        <svg class="ico-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+        <svg class="ico-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+      </button>
+    </div>
+    <nav class="tabs" role="tablist">
+      <button class="tab" data-view="all" role="tab">Dashboard</button>
+      <button class="tab" data-view="prep" role="tab">Prep</button>
+      <button class="tab" data-view="contact" role="tab">Contact</button>
+    </nav>
     <div class="overall">
       <div class="overall-track"><div class="overall-fill" id="overallFill" style="width:0"></div></div>
       <div class="overall-num" id="overallNum"></div>
@@ -220,45 +347,125 @@ const GOALS = [
 
 <script>
   const check = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5l3.2 3L13 4.5"/></svg>';
+  const clockIco = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>';
+  const mailIco = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3.5 6.5l8.5 6.5 8.5-6.5"/></svg>';
   const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  const gradOf = g => `linear-gradient(90deg, ${g[0]}, ${g[1]})`;
 
-  let total = 0, doneAll = 0;
-  const html = GOALS.map((g, gi) => {
-    const grad = `linear-gradient(90deg, ${g.grad[0]}, ${g.grad[1]})`;
-    const rows = g.rows.map(r => {
-      const done = Math.max(0, Math.min(r.target, r.done));
-      total += r.target; doneAll += done;
-      const complete = done >= r.target;
-      const cells = Array.from({length: r.target}, (_, i) =>
-        `<div class="cell ${i < done ? '' : 'empty'}"></div>`).join('');
-      const count = complete
-        ? `<span class="count done" style="background:${grad}">${check}${done}<span class="of">&nbsp;/ ${r.target}</span></span>`
-        : `<span class="count">${done}<span class="of"> / ${r.target}</span></span>`;
-      const names = (r.names && r.names.length)
-        ? `<ul class="names">${r.names.map(n => `<li>${esc(n)}</li>`).join('')}</ul>` : '';
-      return `
-        <div class="row">
-          <div class="row-top"><span class="label">${esc(r.label)}</span>${count}</div>
-          <div class="bar ${complete ? 'complete' : ''}"
-               style="grid-template-columns:repeat(${r.target},1fr);background:${grad};--glow:${g.grad[1]}66">${cells}</div>
-          ${names}
-        </div>`;
+  function localToday() {
+    const d = new Date();
+    return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+  }
+
+  function daysCard() {
+    const today = localToday();
+    const left = DAYS.filter(d => d.date >= today).length;
+    const grad = gradOf(DAYS_GRAD);
+    const cells = DAYS.map(d => {
+      const cls = d.date < today ? '' : (d.date === today ? 'today' : 'empty');
+      return `<div class="cell ${cls}">${d.day}</div>`;
     }).join('');
+    const countText = left === 0 ? 'Done' : (left === 1 ? 'Last day' : `${left} days left`);
+    const count = left === 0
+      ? `<span class="count done" style="background:${grad}">${check}Done</span>`
+      : `<span class="count">${countText}</span>`;
     return `
       <section>
         <div class="sec-head">
-          <div class="sec-num" style="background:${grad}">${gi + 1}</div>
-          <h2>${esc(g.title)}</h2>
+          <div class="sec-num" style="background:${grad}">${clockIco}</div>
+          <h2>Days left</h2>
+          ${count}
         </div>
-        ${rows}
+        <div class="bar labeled" style="grid-template-columns:repeat(${DAYS.length},1fr);background:${grad}">${cells}</div>
       </section>`;
-  }).join('');
+  }
 
-  document.getElementById('goals').innerHTML = html;
-  document.getElementById('overallNum').textContent = `${doneAll} of ${total}`;
-  requestAnimationFrame(() => {
-    document.getElementById('overallFill').style.width = (total ? doneAll / total * 100 : 0) + '%';
+  function eodCard() {
+    const grad = gradOf(EOD_GRAD);
+    const sent = DAYS.filter(d => EOD_SENT[d.day]).length;
+    const complete = sent >= DAYS.length;
+    const cells = DAYS.map(d => EOD_SENT[d.day]
+      ? `<div class="cell"><span class="cell-in">${check}${d.day}</span></div>`
+      : `<div class="cell empty">${d.day}</div>`).join('');
+    const count = complete
+      ? `<span class="count done" style="background:${grad}">${check}${sent}<span class="of">&nbsp;/ ${DAYS.length}</span></span>`
+      : `<span class="count">${sent}<span class="of"> / ${DAYS.length}</span></span>`;
+    return `
+      <section>
+        <div class="sec-head">
+          <div class="sec-num" style="background:${grad}">${mailIco}</div>
+          <h2>EOD Totals Email</h2>
+          ${count}
+        </div>
+        <div class="bar labeled ${complete ? 'complete' : ''}" style="grid-template-columns:repeat(${DAYS.length},1fr);background:${grad};--glow:${EOD_GRAD[1]}66">${cells}</div>
+      </section>`;
+  }
+
+  function render(view) {
+    let total = 0, doneAll = 0;
+    const goals = GOALS.map((g, gi) => {
+      const grad = gradOf(g.grad);
+      const rows = g.rows.filter(r => view === 'all' || r.type === view).map(r => {
+        const done = Math.max(0, Math.min(r.target, r.done));
+        total += r.target; doneAll += done;
+        const complete = done >= r.target;
+        const cells = Array.from({length: r.target}, (_, i) =>
+          `<div class="cell ${i < done ? '' : 'empty'}"></div>`).join('');
+        const count = complete
+          ? `<span class="count done" style="background:${grad}">${check}${done}<span class="of">&nbsp;/ ${r.target}</span></span>`
+          : `<span class="count">${done}<span class="of"> / ${r.target}</span></span>`;
+        const names = (r.names && r.names.length)
+          ? `<ul class="names">${r.names.map(n => `<li>${esc(n)}</li>`).join('')}</ul>` : '';
+        return `
+          <div class="row">
+            <div class="row-top"><span class="label">${esc(r.label)}</span>${count}</div>
+            <div class="bar ${complete ? 'complete' : ''}"
+                 style="grid-template-columns:repeat(${r.target},1fr);background:${grad};--glow:${g.grad[1]}66">${cells}</div>
+            ${names}
+          </div>`;
+      }).join('');
+      return `
+        <section>
+          <div class="sec-head">
+            <div class="sec-num" style="background:${grad}">${gi + 1}</div>
+            <h2>${esc(g.title)}</h2>
+          </div>
+          ${rows}
+        </section>`;
+    }).join('');
+
+    document.getElementById('goals').innerHTML =
+      daysCard() + (view === 'all' ? eodCard() : '') + goals;
+    document.getElementById('overallNum').textContent = `${doneAll} of ${total}`;
+    requestAnimationFrame(() => {
+      document.getElementById('overallFill').style.width = (total ? doneAll / total * 100 : 0) + '%';
+    });
+    document.querySelectorAll('.tab').forEach(t => {
+      const on = t.dataset.view === view;
+      t.classList.toggle('active', on);
+      t.setAttribute('aria-selected', on);
+    });
+  }
+
+  function viewFromHash() {
+    const h = location.hash.replace('#', '');
+    return (h === 'prep' || h === 'contact') ? h : 'all';
+  }
+  document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () => {
+    const v = t.dataset.view;
+    history.replaceState(null, '', v === 'all' ? location.pathname : '#' + v);
+    render(v);
+  }));
+  window.addEventListener('hashchange', () => render(viewFromHash()));
+
+  document.getElementById('themeBtn').addEventListener('click', () => {
+    const root = document.documentElement;
+    const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try { localStorage.setItem('outreach-theme', next); } catch (e) {}
   });
+
+  render(viewFromHash());
 </script>
 </body>
 </html>
