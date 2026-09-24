@@ -65,6 +65,12 @@ const GOALS = [
   }
 ];
 
+const LINKS = [
+  { label: "Cookbook",       url: "https://docs.google.com/spreadsheets/d/1ODeo3ZsnnJ0VfNHYKrzq4SWZpL3COnVhyn9YaQ4E-3E/edit?usp=drivesdk" },
+  { label: "Talks Contacts", url: "https://app.notion.com/p/danfaber/3e522e1a100780449b7afadbdf8f6c90?v=3e522e1a10078080bc83000c08c59af7&source=copy_link" },
+  { label: "Past Contacts",  url: "https://lushin-inc.github.io/LS-mails/" }
+];
+
 const DAYS_GRAD = ["#00ADED", "#0045C2"];
 const EOD_GRAD  = ["#FAB040", "#E34554"];
 </script>
@@ -305,13 +311,38 @@ const EOD_GRAD  = ["#FAB040", "#E34554"];
     border-radius: 999px;
   }
 
+  .links { display: flex; flex-direction: column; gap: 12px; }
+  .link-btn {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 20px 24px;
+    border-radius: 16px;
+    background: var(--empty);
+    color: var(--heading);
+    text-decoration: none;
+    font-size: 18px;
+    font-weight: 500;
+    transition: transform .15s ease, background .2s ease, color .2s ease;
+  }
+  .link-btn svg { width: 20px; height: 20px; flex-shrink: 0; opacity: .7; transition: transform .15s ease, opacity .15s ease; }
+  .link-btn:hover {
+    background: linear-gradient(90deg, #0045C2, #00ADED);
+    color: #fff;
+  }
+  .link-btn:hover svg { opacity: 1; transform: translate(2px, -2px); }
+  .link-btn:active { transform: scale(.99); }
+  .link-btn:focus-visible { outline: 3px solid var(--fresh); outline-offset: 2px; }
+
   @media (max-width: 520px) {
+    .link-btn { padding: 18px 20px; font-size: 17px; }
     .wrap { padding: 36px 16px 60px; }
     section { padding: 24px 18px 26px; }
     .bar { height: 38px; }
     .bar.labeled { height: 44px; }
     .label, .count { font-size: 15px; }
-    .tab { padding: 8px 16px; font-size: 14px; }
+    .tab { padding: 8px 12px; font-size: 14px; }
     .cell { font-size: 13px; }
   }
   @media (prefers-reduced-motion: reduce) {
@@ -336,8 +367,9 @@ const EOD_GRAD  = ["#FAB040", "#E34554"];
       <button class="tab" data-view="all" role="tab">Dashboard</button>
       <button class="tab" data-view="prep" role="tab">Prep</button>
       <button class="tab" data-view="contact" role="tab">Contact</button>
+      <button class="tab" data-view="links" role="tab">Links</button>
     </nav>
-    <div class="overall">
+    <div class="overall" id="overall">
       <div class="overall-track"><div class="overall-fill" id="overallFill" style="width:0"></div></div>
       <div class="overall-num" id="overallNum"></div>
     </div>
@@ -401,7 +433,23 @@ const EOD_GRAD  = ["#FAB040", "#E34554"];
       </section>`;
   }
 
+  const arrowIco = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg>';
+
+  function linksCard() {
+    const btns = LINKS.map(l =>
+      `<a class="link-btn" href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.label)}${arrowIco}</a>`).join('');
+    return `<section><div class="sec-head"><h2>Links</h2></div><div class="links">${btns}</div></section>`;
+  }
+
   function render(view) {
+    setTabs(view);
+    const overall = document.getElementById('overall');
+    if (view === 'links') {
+      overall.style.display = 'none';
+      document.getElementById('goals').innerHTML = daysCard() + linksCard();
+      return;
+    }
+    overall.style.display = '';
     let total = 0, doneAll = 0;
     const goals = GOALS.map((g, gi) => {
       const grad = gradOf(g.grad);
@@ -440,6 +488,9 @@ const EOD_GRAD  = ["#FAB040", "#E34554"];
     requestAnimationFrame(() => {
       document.getElementById('overallFill').style.width = (total ? doneAll / total * 100 : 0) + '%';
     });
+  }
+
+  function setTabs(view) {
     document.querySelectorAll('.tab').forEach(t => {
       const on = t.dataset.view === view;
       t.classList.toggle('active', on);
@@ -449,7 +500,7 @@ const EOD_GRAD  = ["#FAB040", "#E34554"];
 
   function viewFromHash() {
     const h = location.hash.replace('#', '');
-    return (h === 'prep' || h === 'contact') ? h : 'all';
+    return ['prep', 'contact', 'links'].includes(h) ? h : 'all';
   }
   document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () => {
     const v = t.dataset.view;
