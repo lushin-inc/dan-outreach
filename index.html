@@ -28,7 +28,7 @@ const DAYS = [
   { day: "Tue", date: "2026-09-29" }
 ];
 
-const EOD_SENT = { Wed: true, Thu: false, Fri: false, Mon: false, Tue: false };
+const EOD_SENT = { Wed: true, Thu: true, Fri: false, Mon: false, Tue: false };
 
 const GOALS = [
   {
@@ -36,7 +36,7 @@ const GOALS = [
     grad: ["#3A40A8", "#00ADED"],
     rows: [
       { type: "prep",    label: "Find 10 groups + contacts", target: 10, done: 10, names: [] },
-      { type: "contact", label: "Contact those 10 people",   target: 10, done: 0,  names: [] }
+      { type: "contact", label: "Contact those 10 people",   target: 10, done: 10,  names: [] }
     ]
   },
   {
@@ -44,7 +44,7 @@ const GOALS = [
     grad: ["#0045C2", "#00ADED"],
     rows: [
       { type: "prep",    label: "Pick 3 Phi Taus",    target: 3, done: 3, names: [] },
-      { type: "contact", label: "Contact 3 Phi Taus", target: 3, done: 1, names: [] }
+      { type: "contact", label: "Contact 3 Phi Taus", target: 3, done: 2, names: [] }
     ]
   },
   {
@@ -59,8 +59,8 @@ const GOALS = [
     title: "Where are they now",
     grad: ["#F05A28", "#FAB040"],
     rows: [
-      { type: "prep",    label: "Pick 3 where are they now's", target: 3, done: 0, names: [] },
-      { type: "contact", label: "Contact them",                target: 3, done: 0, names: [] }
+      { type: "prep",    label: "Pick 3 where are they now's", target: 3, done: 1, names: [] },
+      { type: "contact", label: "Contact them",                target: 3, done: 1, names: [] }
     ]
   }
 ];
@@ -68,7 +68,9 @@ const GOALS = [
 const LINKS = [
   { label: "Cookbook",       url: "https://docs.google.com/spreadsheets/d/1ODeo3ZsnnJ0VfNHYKrzq4SWZpL3COnVhyn9YaQ4E-3E/edit?usp=drivesdk" },
   { label: "Talks Contacts", url: "https://app.notion.com/p/danfaber/3e522e1a100780449b7afadbdf8f6c90?v=3e522e1a10078080bc83000c08c59af7&source=copy_link" },
-  { label: "Past Contacts",  url: "https://lushin-inc.github.io/LS-mails/" }
+  { label: "Past Contacts",  url: "https://lushin-inc.github.io/LS-mails/" },
+  { label: "RL Talk Track",  url: "https://lushin-inc.github.io/talk-track-rl-call/" },
+  { label: "LS Calls",       url: "https://app.notion.com/p/danfaber/3df22e1a100780aeb446c0570cbabdf0?v=3df22e1a100780bd8ce2000c26658efc&source=copy_link" }
 ];
 
 const DAYS_GRAD = ["#00ADED", "#0045C2"];
