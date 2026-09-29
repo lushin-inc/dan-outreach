@@ -28,7 +28,7 @@ const DAYS = [
   { day: "Tue", date: "2026-09-29" }
 ];
 
-const EOD_SENT = { Wed: true, Thu: true, Fri: false, Mon: false, Tue: false };
+const EOD_SENT = { Wed: true, Thu: true, Fri: true, Mon: true, Tue: false };
 
 const GOALS = [
   {
@@ -44,7 +44,7 @@ const GOALS = [
     grad: ["#0045C2", "#00ADED"],
     rows: [
       { type: "prep",    label: "Pick 3 Phi Taus",    target: 3, done: 3, names: [] },
-      { type: "contact", label: "Contact 3 Phi Taus", target: 3, done: 2, names: [] }
+      { type: "contact", label: "Contact 3 Phi Taus", target: 3, done: 3, names: [] }
     ]
   },
   {
@@ -52,7 +52,7 @@ const GOALS = [
     grad: ["#E34554", "#F05A28"],
     rows: [
       { type: "prep",    label: "Pick 5 past contacts", target: 5, done: 5, names: [] },
-      { type: "contact", label: "Contact them",         target: 5, done: 0, names: [] }
+      { type: "contact", label: "Contact them",         target: 5, done: 2, names: [] }
     ]
   },
   {
