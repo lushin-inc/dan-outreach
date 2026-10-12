@@ -15,52 +15,72 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
 <script>
 /* =====================================================================
-   DAILY UPDATE: change the "done" numbers below, flip the EOD day to
+   DAILY UPDATE: change the "done" numbers below, flip that day's eod to
    true once the email is sent, and optionally add names.
-   type "prep" rows show on the Prep tab, "contact" rows on the Contact tab.
+   type "prep" rows show on the Prep tab, "contact" rows on the Contact
+   tab, "goal" rows on the Dashboard only.
+   perWeek targets multiply by the number of weeks in DAYS. To shorten
+   or extend the stretch, add or delete day lines - nothing else changes.
    Days left updates on its own from today's date.
    ===================================================================== */
 const DAYS = [
-  { day: "Wed", date: "2026-09-23" },
-  { day: "Thu", date: "2026-09-24" },
-  { day: "Fri", date: "2026-09-25" },
-  { day: "Mon", date: "2026-09-28" },
-  { day: "Tue", date: "2026-09-29" }
+  { day: "Mon", date: "2026-10-12", eod: false },
+  { day: "Tue", date: "2026-10-13", eod: false },
+  { day: "Wed", date: "2026-10-14", eod: false },
+  { day: "Thu", date: "2026-10-15", eod: false },
+  { day: "Fri", date: "2026-10-16", eod: false },
+  { day: "Mon", date: "2026-10-19", eod: false },
+  { day: "Tue", date: "2026-10-20", eod: false },
+  { day: "Wed", date: "2026-10-21", eod: false },
+  { day: "Thu", date: "2026-10-22", eod: false },
+  { day: "Fri", date: "2026-10-23", eod: false }
 ];
-
-const EOD_SENT = { Wed: true, Thu: true, Fri: true, Mon: true, Tue: false };
 
 const GOALS = [
   {
     title: "Talks",
     grad: ["#3A40A8", "#00ADED"],
     rows: [
-      { type: "prep",    label: "Find 10 groups + contacts", target: 10, done: 10, names: [] },
-      { type: "contact", label: "Contact those 10 people",   target: 10, done: 10,  names: [] }
-    ]
-  },
-  {
-    title: "Phi Taus",
-    grad: ["#0045C2", "#00ADED"],
-    rows: [
-      { type: "prep",    label: "Pick 3 Phi Taus",    target: 3, done: 3, names: [] },
-      { type: "contact", label: "Contact 3 Phi Taus", target: 3, done: 3, names: [] }
+      { type: "goal",    label: "Get 2 talks booked in October", target: 2, done: 0, names: [] }
     ]
   },
   {
     title: "Past contacts",
     grad: ["#E34554", "#F05A28"],
     rows: [
-      { type: "prep",    label: "Pick 5 past contacts", target: 5, done: 5, names: [] },
-      { type: "contact", label: "Contact them",         target: 5, done: 2, names: [] }
+      { type: "prep",    label: "Pick 5 past contacts a week", perWeek: 5, done: 0, names: [] },
+      { type: "contact", label: "Contact them",                perWeek: 5, done: 0, names: [] }
     ]
   },
   {
     title: "Where are they now",
     grad: ["#F05A28", "#FAB040"],
     rows: [
-      { type: "prep",    label: "Pick 3 where are they now's", target: 3, done: 3, names: [] },
-      { type: "contact", label: "Contact them",                target: 3, done: 3, names: [] }
+      { type: "prep",    label: "Pick 5 where are they now's a week", perWeek: 5, done: 0, names: [] },
+      { type: "contact", label: "Contact them",                       perWeek: 5, done: 0, names: [] }
+    ]
+  },
+  {
+    title: "LinkedIn cold outreach",
+    grad: ["#0045C2", "#00ADED"],
+    rows: [
+      { type: "prep",    label: "Pick 5 cold prospects a week", perWeek: 5, done: 0, names: [] },
+      { type: "contact", label: "Reach out on LinkedIn",        perWeek: 5, done: 0, names: [] }
+    ]
+  },
+  {
+    title: "LinkedIn post",
+    grad: ["#3A40A8", "#E34554"],
+    rows: [
+      { type: "contact", label: "Post once a week", perWeek: 1, done: 0, names: [] }
+    ]
+  },
+  {
+    title: "Referrals",
+    grad: ["#FAB040", "#00ADED"],
+    rows: [
+      { type: "prep",    label: "Find 2 referrals to send", target: 2, done: 0, names: [] },
+      { type: "contact", label: "Send them",                target: 2, done: 0, names: [] }
     ]
   }
 ];
@@ -70,6 +90,8 @@ const LINKS = [
   { label: "Talks Contacts", url: "https://app.notion.com/p/danfaber/3e522e1a100780449b7afadbdf8f6c90?v=3e522e1a10078080bc83000c08c59af7&source=copy_link" },
   { label: "Past Contacts",  url: "https://lushin-inc.github.io/past-ppl" },
   { label: "Past Contacts Notion", url: "https://app.notion.com/p/danfaber/e46cd534a6d649f2be5ce5a25b716032?v=243bda9c5fc042e4a6668e3d49211ee3&source=copy_link" },
+  { label: "Sales Navigator", url: "https://www.linkedin.com/sales/home" },
+  { label: "ZoomInfo",       url: "https://app.zoominfo.com/" },
   { label: "Talk Tracks",    url: "https://lushin-inc.github.io/talk-trax-la" },
   { label: "LS Calls",       url: "https://app.notion.com/p/danfaber/3df22e1a100780aeb446c0570cbabdf0?v=3df22e1a100780bd8ce2000c26658efc&source=copy_link" }
 ];
@@ -298,6 +320,7 @@ const EOD_GRAD  = ["#FAB040", "#E34554"];
   .cell-in { display: inline-flex; align-items: center; gap: 6px; }
   .bar.complete { box-shadow: 0 6px 22px -6px var(--glow); }
   .bar.labeled { height: 52px; }
+  .bars { display: grid; gap: 8px; }
 
   .names {
     list-style: none;
@@ -392,13 +415,28 @@ const EOD_GRAD  = ["#FAB040", "#E34554"];
     return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
   }
 
+  function weeks() {
+    const out = [];
+    DAYS.forEach(d => {
+      if (!out.length || d.day === 'Mon') out.push([]);
+      out[out.length - 1].push(d);
+    });
+    return out;
+  }
+  const WEEKS = weeks().length;
+  const COLS = Math.max(...weeks().map(w => w.length));
+  const targetOf = r => (r.target != null ? r.target : (r.perWeek || 0) * WEEKS);
+
   function daysCard() {
     const today = localToday();
     const left = DAYS.filter(d => d.date >= today).length;
     const grad = gradOf(DAYS_GRAD);
-    const cells = DAYS.map(d => {
-      const cls = d.date < today ? '' : (d.date === today ? 'today' : 'empty');
-      return `<div class="cell ${cls}">${d.day}</div>`;
+    const bars = weeks().map(w => {
+      const cells = w.map(d => {
+        const cls = d.date < today ? '' : (d.date === today ? 'today' : 'empty');
+        return `<div class="cell ${cls}">${d.day}</div>`;
+      }).join('');
+      return `<div class="bar labeled" style="grid-template-columns:repeat(${COLS},1fr);background:${grad}">${cells}</div>`;
     }).join('');
     const countText = left === 0 ? 'Done' : (left === 1 ? 'Last day' : `${left} days left`);
     const count = left === 0
@@ -411,17 +449,20 @@ const EOD_GRAD  = ["#FAB040", "#E34554"];
           <h2>Days left</h2>
           ${count}
         </div>
-        <div class="bar labeled" style="grid-template-columns:repeat(${DAYS.length},1fr);background:${grad}">${cells}</div>
+        <div class="bars">${bars}</div>
       </section>`;
   }
 
   function eodCard() {
     const grad = gradOf(EOD_GRAD);
-    const sent = DAYS.filter(d => EOD_SENT[d.day]).length;
+    const sent = DAYS.filter(d => d.eod).length;
     const complete = sent >= DAYS.length;
-    const cells = DAYS.map(d => EOD_SENT[d.day]
-      ? `<div class="cell"><span class="cell-in">${check}${d.day}</span></div>`
-      : `<div class="cell empty">${d.day}</div>`).join('');
+    const bars = weeks().map(w => {
+      const cells = w.map(d => d.eod
+        ? `<div class="cell"><span class="cell-in">${check}${d.day}</span></div>`
+        : `<div class="cell empty">${d.day}</div>`).join('');
+      return `<div class="bar labeled ${complete ? 'complete' : ''}" style="grid-template-columns:repeat(${COLS},1fr);background:${grad};--glow:${EOD_GRAD[1]}66">${cells}</div>`;
+    }).join('');
     const count = complete
       ? `<span class="count done" style="background:${grad}">${check}${sent}<span class="of">&nbsp;/ ${DAYS.length}</span></span>`
       : `<span class="count">${sent}<span class="of"> / ${DAYS.length}</span></span>`;
@@ -432,7 +473,7 @@ const EOD_GRAD  = ["#FAB040", "#E34554"];
           <h2>EOD Totals Email</h2>
           ${count}
         </div>
-        <div class="bar labeled ${complete ? 'complete' : ''}" style="grid-template-columns:repeat(${DAYS.length},1fr);background:${grad};--glow:${EOD_GRAD[1]}66">${cells}</div>
+        <div class="bars">${bars}</div>
       </section>`;
   }
 
@@ -456,22 +497,25 @@ const EOD_GRAD  = ["#FAB040", "#E34554"];
     let total = 0, doneAll = 0;
     const goals = GOALS.map((g, gi) => {
       const grad = gradOf(g.grad);
-      const rows = g.rows.filter(r => view === 'all' || r.type === view).map(r => {
-        const done = Math.max(0, Math.min(r.target, r.done));
-        total += r.target; doneAll += done;
-        const complete = done >= r.target;
-        const cells = Array.from({length: r.target}, (_, i) =>
+      const picked = g.rows.filter(r => view === 'all' || r.type === view);
+      if (!picked.length) return '';
+      const rows = picked.map(r => {
+        const target = targetOf(r);
+        const done = Math.max(0, Math.min(target, r.done));
+        total += target; doneAll += done;
+        const complete = done >= target;
+        const cells = Array.from({length: target}, (_, i) =>
           `<div class="cell ${i < done ? '' : 'empty'}"></div>`).join('');
         const count = complete
-          ? `<span class="count done" style="background:${grad}">${check}${done}<span class="of">&nbsp;/ ${r.target}</span></span>`
-          : `<span class="count">${done}<span class="of"> / ${r.target}</span></span>`;
+          ? `<span class="count done" style="background:${grad}">${check}${done}<span class="of">&nbsp;/ ${target}</span></span>`
+          : `<span class="count">${done}<span class="of"> / ${target}</span></span>`;
         const names = (r.names && r.names.length)
           ? `<ul class="names">${r.names.map(n => `<li>${esc(n)}</li>`).join('')}</ul>` : '';
         return `
           <div class="row">
             <div class="row-top"><span class="label">${esc(r.label)}</span>${count}</div>
             <div class="bar ${complete ? 'complete' : ''}"
-                 style="grid-template-columns:repeat(${r.target},1fr);background:${grad};--glow:${g.grad[1]}66">${cells}</div>
+                 style="grid-template-columns:repeat(${target},1fr);background:${grad};--glow:${g.grad[1]}66">${cells}</div>
             ${names}
           </div>`;
       }).join('');
