@@ -17,7 +17,8 @@
 /* =====================================================================
    DAILY UPDATE: change the "done" numbers below and optionally add names.
    type "prep" rows show on the Prep tab, "contact" rows on the Contact
-   tab, "goal" rows on the Dashboard only.
+   tab, "goal" rows on the Dashboard only. prepTitle is the card title
+   on the Prep tab.
    Days left updates on its own from today's date.
    ===================================================================== */
 const DAYS = [
@@ -31,6 +32,7 @@ const DAYS = [
 const GOALS = [
   {
     title: "Past contacts",
+    prepTitle: "Pick 10 Contacts",
     grad: ["#E34554", "#F05A28"],
     rows: [
       { type: "prep",    label: "10 LS Contacts", target: 10, done: 0, names: [] },
@@ -39,6 +41,7 @@ const GOALS = [
   },
   {
     title: "Where are they now",
+    prepTitle: "Pick 10 WATN",
     grad: ["#F05A28", "#FAB040"],
     rows: [
       { type: "prep",    label: "10 WATN", target: 10, done: 5, names: [] },
@@ -47,6 +50,7 @@ const GOALS = [
   },
   {
     title: "LinkedIn cold outreach",
+    prepTitle: "Pick 10 People",
     grad: ["#0045C2", "#00ADED"],
     rows: [
       { type: "prep",    label: "10 People", target: 10, done: 0, names: [] },
@@ -55,6 +59,7 @@ const GOALS = [
   },
   {
     title: "2 LinkedIn Posts",
+    prepTitle: "Write LinkedIn Post",
     grad: ["#3A40A8", "#E34554"],
     rows: [
       { type: "prep",    label: "Write Post",       target: 2,  done: 1, names: [] },
@@ -63,6 +68,7 @@ const GOALS = [
   },
   {
     title: "2 Referrals Sent",
+    prepTitle: "Find 2 Referrals",
     grad: ["#FAB040", "#00ADED"],
     rows: [
       { type: "prep",    label: "Find 2 referrals to send", target: 2, done: 0, names: [] },
@@ -466,6 +472,8 @@ const DAYS_GRAD = ["#00ADED", "#0045C2"];
       const grad = gradOf(g.grad);
       const picked = g.rows.filter(r => view === 'all' || r.type === view);
       if (!picked.length) return '';
+      const actionView = view === 'prep' && g.prepTitle && picked.length === 1;
+      let headCount = '';
       const rows = picked.map(r => {
         const target = targetOf(r);
         const done = Math.max(0, Math.min(target, r.done));
@@ -478,9 +486,10 @@ const DAYS_GRAD = ["#00ADED", "#0045C2"];
           : `<span class="count">${done}<span class="of"> / ${target}</span></span>`;
         const names = (r.names && r.names.length)
           ? `<ul class="names">${r.names.map(n => `<li>${esc(n)}</li>`).join('')}</ul>` : '';
+        if (actionView) headCount = count;
         return `
           <div class="row">
-            <div class="row-top"><span class="label">${esc(r.label)}</span>${count}</div>
+            ${actionView ? '' : `<div class="row-top"><span class="label">${esc(r.label)}</span>${count}</div>`}
             <div class="bar ${complete ? 'complete' : ''}"
                  style="grid-template-columns:repeat(${target},1fr);background:${grad};--glow:${g.grad[1]}66">${cells}</div>
             ${names}
@@ -490,7 +499,8 @@ const DAYS_GRAD = ["#00ADED", "#0045C2"];
         <section>
           <div class="sec-head">
             <div class="sec-num" style="background:${grad}">${gi + 1}</div>
-            <h2>${esc(g.title)}</h2>
+            <h2>${esc(actionView ? g.prepTitle : g.title)}</h2>
+            ${headCount}
           </div>
           ${rows}
         </section>`;
