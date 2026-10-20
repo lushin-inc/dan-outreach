@@ -84,18 +84,46 @@ const GOALS = [
   }
 ];
 
+/* LINKS: each group gets a header on the Links tab. To add a link,
+   add one { label, url } line inside the group it belongs to. */
 const LINKS = [
-  { label: "Prospecting This Week", url: "https://app.notion.com/p/danfaber/3f922e1a1007804480caebf453bf6730?v=3f922e1a100780e6b7d5000c7be631a4&source=copy_link" },
-  { label: "WATN (Past Clients)", url: "https://app.notion.com/p/danfaber/Past-Clients-3fd22e1a10078095b63ad84998e1badf?source=copy_link" },
-  { label: "LS Clients - Sheets", url: "https://docs.google.com/spreadsheets/d/1Bn-O28hvfgVQhp9EkDw51_sz0XyxwYtYcYHU6MeeHds/edit?gid=119484984#gid=119484984" },
-  { label: "Cookbook",       url: "https://docs.google.com/spreadsheets/d/1ODeo3ZsnnJ0VfNHYKrzq4SWZpL3COnVhyn9YaQ4E-3E/edit?usp=drivesdk" },
-  { label: "Talks Contacts", url: "https://app.notion.com/p/danfaber/3e522e1a100780449b7afadbdf8f6c90?v=3e522e1a10078080bc83000c08c59af7&source=copy_link" },
-  { label: "Past Contacts",  url: "https://lushin-inc.github.io/past-ppl" },
-  { label: "Past Contacts Notion", url: "https://app.notion.com/p/danfaber/e46cd534a6d649f2be5ce5a25b716032?v=243bda9c5fc042e4a6668e3d49211ee3&source=copy_link" },
-  { label: "Sales Navigator", url: "https://www.linkedin.com/sales/home" },
-  { label: "ZoomInfo",       url: "https://app.zoominfo.com/" },
-  { label: "Talk Tracks",    url: "https://lushin-inc.github.io/talk-trax-la" },
-  { label: "LS Calls",       url: "https://app.notion.com/p/danfaber/3df22e1a100780aeb446c0570cbabdf0?v=3df22e1a100780bd8ce2000c26658efc&source=copy_link" }
+  {
+    group: "This Week",
+    links: [
+      { label: "Prospecting This Week", url: "https://app.notion.com/p/danfaber/3f922e1a1007804480caebf453bf6730?v=3f922e1a100780e6b7d5000c7be631a4&source=copy_link" },
+      { label: "Top 10 Prospects",      url: "https://lushin-inc.github.io/top/" },
+      { label: "Cookbook",              url: "https://docs.google.com/spreadsheets/d/1ODeo3ZsnnJ0VfNHYKrzq4SWZpL3COnVhyn9YaQ4E-3E/edit?usp=drivesdk" }
+    ]
+  },
+  {
+    group: "Past Contacts",
+    links: [
+      { label: "LS Clients - Sheets",   url: "https://docs.google.com/spreadsheets/d/1Bn-O28hvfgVQhp9EkDw51_sz0XyxwYtYcYHU6MeeHds/edit?gid=119484984#gid=119484984" },
+      { label: "Past Contacts",         url: "https://lushin-inc.github.io/past-ppl" },
+      { label: "Past Contacts Notion",  url: "https://app.notion.com/p/danfaber/e46cd534a6d649f2be5ce5a25b716032?v=243bda9c5fc042e4a6668e3d49211ee3&source=copy_link" },
+      { label: "LS Calls",              url: "https://app.notion.com/p/danfaber/3df22e1a100780aeb446c0570cbabdf0?v=3df22e1a100780bd8ce2000c26658efc&source=copy_link" },
+      { label: "Talk Tracks",           url: "https://lushin-inc.github.io/talk-trax-la" }
+    ]
+  },
+  {
+    group: "WATN",
+    links: [
+      { label: "WATN (Past Clients)",   url: "https://app.notion.com/p/danfaber/Past-Clients-3fd22e1a10078095b63ad84998e1badf?source=copy_link" }
+    ]
+  },
+  {
+    group: "LinkedIn",
+    links: [
+      { label: "Sales Navigator",       url: "https://www.linkedin.com/sales/home" },
+      { label: "ZoomInfo",              url: "https://app.zoominfo.com/" }
+    ]
+  },
+  {
+    group: "Talks",
+    links: [
+      { label: "Talks Contacts",        url: "https://app.notion.com/p/danfaber/3e522e1a100780449b7afadbdf8f6c90?v=3e522e1a10078080bc83000c08c59af7&source=copy_link" }
+    ]
+  }
 ];
 
 const DAYS_GRAD = ["#00ADED", "#0045C2"];
@@ -118,6 +146,7 @@ const DAYS_GRAD = ["#00ADED", "#0045C2"];
     --tab-active-text: #ffffff;
     --chip: #ffffff;
     --empty-label: #8a8ca8;
+    --link: #0045C2;
   }
   :root[data-theme="dark"] {
     --bg: #0e0f26;
@@ -132,6 +161,7 @@ const DAYS_GRAD = ["#00ADED", "#0045C2"];
     --tab-active-text: #21245C;
     --chip: #282b58;
     --empty-label: #7b7fa8;
+    --link: #a9bdf0;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -338,32 +368,35 @@ const DAYS_GRAD = ["#00ADED", "#0045C2"];
     border-radius: 999px;
   }
 
-  .links { display: flex; flex-direction: column; gap: 12px; }
-  .link-btn {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    padding: 20px 24px;
-    border-radius: 16px;
-    background: var(--empty);
-    color: var(--heading);
-    text-decoration: none;
+  .link-groups { display: flex; flex-direction: column; gap: 34px; }
+  .link-group h3 {
     font-size: 18px;
-    font-weight: 500;
-    transition: transform .15s ease, background .2s ease, color .2s ease;
+    font-weight: 600;
+    color: var(--heading);
+    margin-bottom: 10px;
   }
-  .link-btn svg { width: 20px; height: 20px; flex-shrink: 0; opacity: .7; transition: transform .15s ease, opacity .15s ease; }
-  .link-btn:hover {
-    background: linear-gradient(90deg, #0045C2, #00ADED);
-    color: #fff;
+  .link-row {
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: 30px;
+    row-gap: 2px;
+    margin-left: -6px;
   }
-  .link-btn:hover svg { opacity: 1; transform: translate(2px, -2px); }
-  .link-btn:active { transform: scale(.99); }
-  .link-btn:focus-visible { outline: 3px solid var(--fresh); outline-offset: 2px; }
+  .link-row a {
+    font-size: 18px;
+    font-weight: 400;
+    color: var(--link);
+    text-decoration: none;
+    padding: 8px 6px;
+    border-radius: 8px;
+    transition: color .15s ease;
+  }
+  .link-row a:hover { color: var(--fresh); text-decoration: underline; text-underline-offset: 4px; }
+  .link-row a:focus-visible { outline: 3px solid var(--fresh); outline-offset: 0; }
 
   @media (max-width: 520px) {
-    .link-btn { padding: 18px 20px; font-size: 17px; }
+    .link-row { column-gap: 22px; }
+    .link-row a { font-size: 17px; }
     .wrap { padding: 36px 16px 60px; }
     section { padding: 24px 18px 26px; }
     .bar { height: 38px; }
@@ -453,12 +486,13 @@ const DAYS_GRAD = ["#00ADED", "#0045C2"];
       </section>`;
   }
 
-  const arrowIco = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg>';
-
   function linksCard() {
-    const btns = LINKS.map(l =>
-      `<a class="link-btn" href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.label)}${arrowIco}</a>`).join('');
-    return `<section><div class="sec-head"><h2>Links</h2></div><div class="links">${btns}</div></section>`;
+    const groups = LINKS.map(g => {
+      const links = g.links.map(l =>
+        `<a href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.label)}</a>`).join('');
+      return `<div class="link-group"><h3>${esc(g.group)}</h3><div class="link-row">${links}</div></div>`;
+    }).join('');
+    return `<section><div class="link-groups">${groups}</div></section>`;
   }
 
   function render(view) {
